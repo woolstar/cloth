@@ -1,0 +1,26 @@
+
+<p style="font-size:20pt">
+User {name} (<A href="home_pg.pl?acct={acct}">{user}</A>)
+</p>
+
+<p style="font-size:18pt">
+Style: {style}
+</p>
+
+<table cellpadding=5>
+<tr><th width=90>Size</th><th width=30>Count</th></tr>
+<repeat on=inv>
+<tr valign=center>
+  <td class=sz align=center><b>{inv.sz}</b></td>
+  <td align=right> <A href="inv_test.pl?acct={acct}&style_id={inv.style_id}&sizes_id={inv.sizes_id}&listed=1">{inv.count}</td>
+  <td> {inv.img} </td>
+</tr>
+</repeat>
+</table>
+
+<p>
+<p>
+Total <b>{total}</b>
+
+<p>
+

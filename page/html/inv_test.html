@@ -1,0 +1,51 @@
+
+<p style="font-size:14pt">
+User {name} (<A href="home_pg.pl?acct={acct}">{user}</A>)
+</p>
+
+<hr>
+Update inventory <A href="inv_list.pl?acct={acct}&style_id={style_id}"><b>{style}</b></A> {sizelabel}:
+
+<hr>
+<p>
+<FORM name=f action="{query}" >
+  <BUTTON Name="Post" TYPE=post value=update>Post</BUTTON>
+  <INPUT type=hidden name="acct" value={"acct"} />
+  <INPUT type=hidden name="style_id" value={"style_id"} />
+  <INPUT type=hidden name="sizes_id" value={"sizes_id"} />
+  <INPUT type=hidden name="listed" value={"listed"} />
+  <INPUT type=hidden name="items" value={"items"} />
+  <p>
+
+<TABLE cellpadding=2>
+
+<REPEAT on=item>
+
+<TR valign=top>
+<TD>
+Count <br>
+<INPUT type=number class=count inputmode=numeric name="item_{item.item_id}_count" value={item.count} />
+<P>
+Tags <br>
+<TEXTAREA cols=8 rows=5 name="item_{item.item_id}_tag">{item.tags}</TEXTAREA>
+</TD>
+<TD>
+<IMG {item.scale} src={item.img} />
+</TD>
+<td>
+<A target="_blank" href="{item.img}">full</A>
+<p>
+<A target="_blank" href="media_item.pl?acct={acct}&media_id={item.media_id}">media</A>
+</td>
+</TR>
+</REPEAT>
+
+</table>
+<p>
+<BUTTON Name="Post" TYPE=post value=update>Post</BUTTON>
+
+</FORM>
+
+<p>
+<XMP>{data}</XMP>
+

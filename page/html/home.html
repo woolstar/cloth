@@ -1,0 +1,29 @@
+
+<p style="font-size:14pt">
+User {name} ({user})
+</p>
+
+<hr>
+Inventory:
+<XMP>{data}</XMP>
+
+<table cellpadding=5>
+<tr><th width=120>Style</th><th width=30>Total</th><th width=48 align=center>New</th></tr>
+<repeat on=inv>
+<tr valign=center>
+  <td class=lead>{inv.style}</td>
+  <td class=total align=right><A href="inv_list.pl?acct={acct}&style_id={inv.style_id}">{inv.total}</A></td>
+  <td class=news align=right width=40>{inv.news}</td>
+  <td width=12></td>
+  {inv.row}
+  {inv.pad}
+</tr>
+</repeat>
+</table>
+
+<p>
+<p>
+Total <b>{total}</b>
+
+<p>
+

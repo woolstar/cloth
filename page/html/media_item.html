@@ -1,0 +1,55 @@
+
+<p style="font-size:14pt">
+User {name} (<A href="home_pg.pl?acct={acct}">{user}</A>)
+</p>
+
+<hr>
+Item: {name} ( {style} )
+
+<table cellpadding=5>
+<tr valign=top><td>{img}</td>
+  <td>
+    <FORM name=f action="?" >
+      <INPUT type=hidden name="acct" value={"acct"} />
+      <INPUT type=hidden name="media_id" value={"media_id"} />
+      <INPUT type=hidden name="style_id" value={"style_id"} />
+      <INPUT type=hidden name="sizes" value={"sizes"} />
+      <INPUT type=hidden name="gen" value={"gen"} />
+
+<table cellpadding=2>
+<repeat on=szs>
+<tr>
+  <td class=sz width=36 align=center>{szs.label}</td>
+  <td><input type=number class=count inputmode=numeric name="size_{szs.sizes_id}_count" value={szs."count"} /></td>
+  <td>
+    <input type=text name="size_{szs.sizes_id}_tags" value={szs."tags"} />
+    <input type=hidden name="size_{szs.sizes_id}_id" value={szs.item_id} />
+  </td>
+</tr>
+</repeat>
+</table>
+
+    <BUTTON name="Post" type=post value=update>Post</BUTTON>
+    </FORM>
+  </td>
+</tr>
+</table>
+
+<A href="media_list.pl?acct={acct}&style_id={style_id}">all</a>
+
+<repeat on=inv>
+<tr valign=center>
+  <td class=lead>{inv.style}</td>
+  <td class=total align=right><A href="inv_list.pl?acct={acct}&style_id={inv.style_id}">{inv.total}</A></td>
+  {inv.row}
+  {inv.pad}
+</tr>
+</repeat>
+</table>
+
+<p>
+<p>
+Total <b>{total}</b>
+
+<p>
+

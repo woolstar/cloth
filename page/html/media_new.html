@@ -1,0 +1,29 @@
+
+<p style="font-size:14pt">
+User {name} (<A href="home_pg.pl?acct={acct}">{user}</A>)
+</p>
+
+<hr>
+New inventory
+<p>
+{style_name} ( {style_group} )
+
+<p>
+
+<table cellpadding=2>
+<repeat on=media>
+<tr valign=top>
+  <td class=sz width=36 align=center>
+  {media.name}
+  <p>
+  <A href="media_item.pl?acct={acct}&media_id={media.media_id}">setup</a>
+  </td>
+  <td>
+  {media.img}
+  </td>
+</tr>
+</repeat>
+</table>
+
+<p>
+
