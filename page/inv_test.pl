@@ -23,7 +23,7 @@ sub web_redirect_home
   my ($id)= @_ ;
 
   my $pg= "<html><head>" ;
-  $pg .= qq(<META http-equiv="refresh" content="0;URL=home_pg.pl?user=$id">) ;
+  $pg .= qq(<META http-equiv="refresh" content="0;URL=index.pl?user=$id">) ;
   $pg .+ "</head><body>Updated</body></html>" ;
 
   gen_bare( $pg ) ;
