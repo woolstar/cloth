@@ -1,6 +1,6 @@
 
 <p style="font-size:14pt">
-User {name} (<A href="home_pg.pl?acct={acct}">{user}</A>)
+User {name} (<A href="index.pl?acct={acct}">{user}</A>)
 </p>
 
 <hr>
@@ -9,6 +9,10 @@ New inventory
 {style_name} ( {style_group} )
 
 <p>
+
+<FORM name=f action="?" >
+	<INPUT type=hidden name="acct" value={"acct"} />
+	<INPUT type=hidden name="style_id" value={"style_id"} />
 
 <table cellpadding=2>
 <repeat on=media>
@@ -21,9 +25,15 @@ New inventory
   <td>
   {media.img}
   </td>
+  <td>
+  <input type="checkbox" name="item_{media.media_id}">
 </tr>
 </repeat>
 </table>
+
+	{style_sel}
+	<BUTTON name="action" type=post value=update>Update</BUTTON>
+</FORM>
 
 <p>
 

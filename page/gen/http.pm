@@ -6,7 +6,7 @@ use 5.022 ;
 require Exporter;
 our @ISA = ("Exporter") ;
 our @EXPORT = qw(encode_url decode_url encode_word decode_word parse_query) ;
-our @EXPORT_OK = qw(pack_query %query %qwery) ;
+our @EXPORT_OK = qw(pack_query %query %qwery encode_choice) ;
 
 sub encode_url
 {
@@ -42,6 +42,21 @@ sub decode_word
   $s =~ s/&amp;/&/g ;
   $s
 }
+
+sub encode_choice
+{
+	my ( $na, $lst_, $sel )= @_ ;
+	my $txt ;
+
+	for ( @$lst_ )
+	{
+		my ( $k, $v ) = %$_ ;
+		$txt .= " <option value=\"" . encode_url( $k ) . "\">" . encode_word( $v ) . "</option>\n" ;
+	}
+
+	return "<select name=$na>\n" . $txt . "</select>" ;
+}
+
 
 sub parse_query
 {

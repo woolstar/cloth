@@ -2,6 +2,7 @@
 
 use 5.022 ;
 use gen::page qw(gen_page templ load_templ) ;
+use gen::http 'encode_choice' ;
 use gen::dbcloth ;
 
   no warnings 'experimental::smartmatch' ;
@@ -35,22 +36,17 @@ sub do_update
   my ($rec_)= @_ ;
   my %dat ;
 
-  my $sth_up= sth_item($rec_->{acct}) ;
   my $sth_ins= sth_itim($rec_->{acct}) ;
-
   my $sty= $rec_->{style_id} ;
-  for ( split /,/, $rec_->{sizes} )
+  my $sz= $rec_->{sizing} ;
+
+  for ( grep { /item_\d/ } keys %$rec_ )
   {
-    my $sz= "size_$_" ;
-    my ( $ct, $tags, $id )= @$rec_{ "${sz}_count", "${sz}_tags", "${sz}_id" } ;
-
-    if ( $id ) { $sth_up-> execute( $ct, $tags, $id ) }
-    	else { $sth_ins-> execute( $rec_->{media_id}, $_, $sty, $ct, $tags ) if $ct || $tags }
+	my ($d)= /(\d+)/ ;
+	next unless $d ;
+	$sth_ins-> execute( $d, $sz, $sty, 1, '' ) ;
+	media_nogen( $d ) ;
   }
-
-  $dat{error}= Dumper($rec_) ;
-  web_redirect( $rec_->{acct}, $sty ) ;
-  exit
 }
 
 {
@@ -63,10 +59,20 @@ sub do_update
   $dat{username}= $u_->{name} ;
   my $sty= $dat{style_id} ;
 
+  do_update( \%dat ) if $args{action} eq 'update' ;
+
   $dat{media}= load_newmedia($args{acct}, $sty) ;
   {
     my $styles_= get_styleinfo( $sty ) ;
     @dat{ qw(style_id style_name style_path style_group sizing) }= @$styles_ if $styles_ ;
+  }
+
+  {
+	my $sizes_= load_sizes( $dat{sizing} ) ;
+	my @choice = map { { $_->{sizes_id} => $_->{ label } } }
+				 sort { $a->{sizes_id} <=> $b->{sizes_id} } @$sizes_ ;
+
+	$dat{ style_sel } = encode_choice( "sizing", \@choice ) ;
   }
 
   my $szlist_= load_sizes( $dat{sizing} ) ;
