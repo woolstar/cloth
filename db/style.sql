@@ -15,7 +15,7 @@ INSERT INTO sizing (name, sizesid) SELECT 'GEN', id FROM sizes where code = 'GEN
 
 DELETE FROM style WHERE 1 ;
 
-INSERT INTO style (name, `group`, sizing) VALUES ( 'Amelia', 'dress', 'XXS2XL' ) ;
+INSERT INTO style (name, `group`, sizing) VALUES ( 'Amelia', 'dress', 'XXS3XL' ) ;
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Julia', 'dress', 'XXS3XL' ) ;
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Nicole', 'dress', 'XXS3XL' ) ;
 
@@ -44,4 +44,6 @@ INSERT INTO style (name, `group`, sizing) VALUES ( 'Sloan', 'Kids', 'KID' ) ;
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Gracie', 'Kids', 'KID' ) ;
 
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Combo', '', 'GEN' ) ;
+
+INSERT INTO style (name, `group`, sizing) VALUES ( 'Carly', 'dress', 'XXS3XL' ) ;
 
