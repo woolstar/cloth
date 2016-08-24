@@ -1,17 +1,18 @@
 
 DELETE FROM sizing WHERE 1 ;
 
-INSERT INTO sizing (name, sizesid) SELECT 'XXS3XL', id FROM sizes where ranking BETWEEN 10 AND 17 ;
-INSERT INTO sizing (name, sizesid) SELECT 'XXS2XL', id FROM sizes where ranking BETWEEN 10 AND 16 ;
-INSERT INTO sizing (name, sizesid) SELECT 'XSXL', id FROM sizes where ranking BETWEEN 11 AND 15 ;
-INSERT INTO sizing (name, sizesid) SELECT 'XXSXL', id FROM sizes where ranking BETWEEN 10 AND 15 ;
-INSERT INTO sizing (name, sizesid) SELECT 'M3XL', id FROM sizes where ranking BETWEEN 13 AND 17 ;
-INSERT INTO sizing (name, sizesid) SELECT 'SL', id FROM sizes where ranking IN (12, 14) ;
-INSERT INTO sizing (name, sizesid) SELECT 'SML', id FROM sizes where ranking IN (12, 13, 14) ;
-INSERT INTO sizing (name, sizesid) SELECT 'LEG', id FROM sizes where code IN ('TW', 'OS', 'TC' ) ;
-INSERT INTO sizing (name, sizesid) SELECT 'KLEG', id FROM sizes where code IN ('KS', 'KL' ) ;
-INSERT INTO sizing (name, sizesid) SELECT 'KID', id FROM sizes where ranking BETWEEN 40 AND 46 ;
-INSERT INTO sizing (name, sizesid) SELECT 'GEN', id FROM sizes where code = 'GEN' ;
+INSERT INTO sizing (name, sizes_id) SELECT 'XXS3XL', sizes_id FROM sizes where ranking BETWEEN 10 AND 17 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'XXS2XL', sizes_id FROM sizes where ranking BETWEEN 10 AND 16 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'XSXL', sizes_id FROM sizes where ranking BETWEEN 11 AND 15 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'XXSXL', sizes_id FROM sizes where ranking BETWEEN 10 AND 15 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'M3XL', sizes_id FROM sizes where ranking BETWEEN 13 AND 17 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'SL', sizes_id FROM sizes where ranking IN (12, 14) ;
+INSERT INTO sizing (name, sizes_id) SELECT 'SML', sizes_id FROM sizes where ranking IN (12, 13, 14) ;
+INSERT INTO sizing (name, sizes_id) SELECT 'LEG', sizes_id FROM sizes where code IN ('TW', 'OS', 'TC' ) ;
+INSERT INTO sizing (name, sizes_id) SELECT 'KLEG', sizes_id FROM sizes where code IN ('KS', 'KL' ) ;
+INSERT INTO sizing (name, sizes_id) SELECT 'KID', sizes_id FROM sizes where ranking BETWEEN 40 AND 46 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'KDRESS', sizes_id FROM sizes where ranking BETWEEN 50 AND 55 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'GEN', sizes_id FROM sizes where code = 'GEN' ;
 
 DELETE FROM style WHERE 1 ;
 
@@ -38,10 +39,12 @@ INSERT INTO style (name, `group`, sizing) VALUES ( 'Leggings', 'Leggings', 'LEG'
 INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Kids Leggings', 'kleggings', 'Leggings', 'LEG' ) ;
 
 
-INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'DotDot Smile', 'ddsmile', 'Kids', 'KID' ) ;
+INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'DotDot Smile Lucy', 'ddsmile', 'Kids', 'KDRESS' ) ;
 INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Kids Azure', 'kazure', 'Kids', 'KID' ) ;
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Sloan', 'Kids', 'KID' ) ;
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Gracie', 'Kids', 'KID' ) ;
+INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Adeline', 'adeline', 'Kids', 'KID' ) ;
+INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Mae', 'mae', 'Kids', 'KID' ) ;
 
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Combo', '', 'GEN' ) ;
 
