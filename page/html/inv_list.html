@@ -21,6 +21,14 @@ Style: {style}
 <p>
 <p>
 Total <b>{total}</b>
+<hr>
+<form name=f action="inv_util.pl?">
+  <INPUT type=hidden name="acct" value={"acct"} />
+  <INPUT type=hidden name="style_id" value={"style_id"} />
+  <button name=action type=post value=clear>Clear counts</button>
+</form>
+<p>
+<A href="media_old.pl?acct={acct}&style_id={style_id}">old images</A>
 
 <p>
 
