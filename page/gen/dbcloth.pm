@@ -107,6 +107,19 @@ sub load_newmedia
 		) ;
 }
 
+sub load_olditems
+{
+  my ($own, $sty) = @_ ;
+
+  return $dbh-> selectall_arrayref(
+		  "SELECT id AS item_id, media_id, name, geom, path "
+		  . "FROM item JOIN media USING ( media_id ) "
+		  . "WHERE owner_fk = ? AND style_fk = ? AND count = 0 ",
+		  { Slice => {} },
+		  $own, $sty
+		) ;
+}
+
 sub load_items
 {
   my %rec ;
@@ -141,11 +154,20 @@ sub load_item
   return $dbh-> selectall_arrayref(
 		  "SELECT id AS item_id, media_id, name, geom, path, count, it.tags AS tags "
 		  . "FROM item AS it JOIN media USING ( media_id ) "
-		  . "WHERE owner_fk = ? AND style_fk = ? AND sizes_id = ?",
+		  . "WHERE owner_fk = ? AND style_fk = ? AND sizes_id = ? AND `count` > 0 ",
 		  { Slice => {} },
 		  @_
 		) ;
 
+}
+
+sub db_clearcounts
+{
+  my ( $id, $sty )= @_ ;
+
+  return $dbh-> do( "UPDATE item SET `count`=0 WHERE owner_fk= ? AND style_fk= ?", 
+  					undef, $id, $sty 
+				  ) ;
 }
 
 sub media_nogen
