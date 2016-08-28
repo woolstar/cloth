@@ -36,7 +36,7 @@ INSERT INTO style (name, `group`, sizing) VALUES ( 'Monroe', 'kimono', 'SL' ) ;
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Lindsey', 'kimono', 'SML' ) ;
 
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Leggings', 'Leggings', 'LEG' ) ;
-INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Kids Leggings', 'kleggings', 'Leggings', 'LEG' ) ;
+INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Kids Leggings', 'kleggings', 'Leggings', 'KLEG' ) ;
 
 
 INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'DotDot Smile Lucy', 'ddsmile', 'Kids', 'KDRESS' ) ;
@@ -49,4 +49,5 @@ INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Mae', 'mae', 'Kids',
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Combo', '', 'GEN' ) ;
 
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Carly', 'dress', 'XXS3XL' ) ;
+INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Mark', 'mark', 'Men', 'M3XL' ) ;
 
