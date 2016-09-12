@@ -10,8 +10,9 @@ INSERT INTO sizing (name, sizes_id) SELECT 'SL', sizes_id FROM sizes where ranki
 INSERT INTO sizing (name, sizes_id) SELECT 'SML', sizes_id FROM sizes where ranking IN (12, 13, 14) ;
 INSERT INTO sizing (name, sizes_id) SELECT 'LEG', sizes_id FROM sizes where code IN ('TW', 'OS', 'TC' ) ;
 INSERT INTO sizing (name, sizes_id) SELECT 'KLEG', sizes_id FROM sizes where code IN ('KS', 'KL' ) ;
-INSERT INTO sizing (name, sizes_id) SELECT 'KID', sizes_id FROM sizes where ranking BETWEEN 40 AND 46 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'KID', sizes_id FROM sizes where code IN ( 'K2', 'K4', 'K6', 'K8', 'K10', 'K12', 'K14') ;
 INSERT INTO sizing (name, sizes_id) SELECT 'KDRESS', sizes_id FROM sizes where ranking BETWEEN 50 AND 55 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'K123', sizes_id FROM sizes where ranking BETWEEN 40 AND 42 ;
 INSERT INTO sizing (name, sizes_id) SELECT 'GEN', sizes_id FROM sizes where code = 'GEN' ;
 
 DELETE FROM style WHERE 1 ;
@@ -33,7 +34,7 @@ INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Perfect T', 'perfect
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Patrick', 'top', 'M3XL' ) ;
 
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Monroe', 'kimono', 'SL' ) ;
-INSERT INTO style (name, `group`, sizing) VALUES ( 'Lindsey', 'kimono', 'SML' ) ;
+INSERT INTO style (name, `group`, sizing) VALUES ( 'Lindsay', 'kimono', 'SML' ) ;
 
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Leggings', 'Leggings', 'LEG' ) ;
 INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Kids Leggings', 'kleggings', 'Leggings', 'KLEG' ) ;
@@ -49,5 +50,8 @@ INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Mae', 'mae', 'Kids',
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Combo', '', 'GEN' ) ;
 
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Carly', 'dress', 'XXS3XL' ) ;
+INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Sarah', 'sarah', 'sweater', 'XSXL' ) ;
 INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Mark', 'mark', 'Men', 'M3XL' ) ;
+
+INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Bianka', 'bianka', 'kimono', 'KID' ) ;
 
