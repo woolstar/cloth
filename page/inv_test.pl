@@ -29,6 +29,18 @@ sub web_redirect_home
   gen_bare( $pg ) ;
 }
 
+sub reorder
+{
+  my ($its_)= @_ ;
+  my (@first, @zero) ;
+
+  for ( @$its_ )
+    { if ( $_->{count} > 0 ) { push @first, $_ } else { push @zero, $_ } }
+
+  push @first, @zero ;
+  return \@first ;
+}
+
 sub do_update
 {
   my ( $rec_ )= @_ ;
@@ -75,6 +87,8 @@ sub do_update
   $dat{_head} = '<style type="text/css">'. $css . '</style>' ;
 
   my $its_= load_item( @args{ qw( acct style_id sizes_id ) } ) ;
+  $its_= reorder( $its_ ) ;
+
   my @recs ;
 
   $dat{items}= join(',', map { $_->{item_id} } @$its_ ) ;
