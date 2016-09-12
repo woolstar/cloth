@@ -1,22 +1,22 @@
 
 CREATE TABLE IF NOT EXISTS
-    identity
-    (
-	id INTEGER PRIMARY KEY,
-	user,
-	name,
-	auth,
-	authty
-    ) ;
+  identity
+  (
+    id INTEGER PRIMARY KEY,
+    user,
+    name,
+    auth,
+    authty
+  ) ;
 
 INSERT INTO identity (id, user, name, auth, authty ) VALUES ( 100, 'nylulagirl', 'Jeanne Woolverton', 'a15f80401240607f', 3 ) ;
 
 CREATE TABLE IF NOT EXISTS
-    auth_type
-    (
-    	authid INT,
-	label
-    ) ;
+  auth_type
+  (
+    authid INT,
+    label
+  ) ;
 
 INSERT INTO auth_type (authid, label) VALUES ( 0, 'nil' ) ;
 INSERT INTO auth_type (authid, label) VALUES ( 1, 'pass' ) ;
@@ -24,21 +24,21 @@ INSERT INTO auth_type (authid, label) VALUES ( 2, 'facebook' ) ;
 INSERT INTO auth_type (authid, label) VALUES ( 3, 'cert' ) ;
 
 CREATE TABLE IF NOT EXISTS
-    style
-    (
-    	style_id INTEGER PRIMARY KEY,
-	`name`,
-	`folder`,
-	`group`,
-	sizing
-    ) ;
+  style
+  (
+    style_id INTEGER PRIMARY KEY,
+    `name`,
+    `folder`,
+    `group`,
+    sizing
+  ) ;
 
 CREATE TABLE IF NOT EXISTS
-    sizing
-    (
-	name,
-	sizes_id
-    ) ;
+  sizing
+  (
+    name,
+    sizes_id
+  ) ;
 
 CREATE TABLE IF NOT EXISTS
   sizes
@@ -62,20 +62,20 @@ INSERT INTO media_type (mediatype, label) VALUES ( 1, 'jpeg' ) ;
 INSERT INTO media_type (mediatype, label) VALUES ( 2, 'png' ) ;
 
 CREATE TABLE IF NOT EXISTS
-    media
-    (
-    	media_id INTEGER PRIMARY KEY,
-	name,
-	path,
-	geom,
-	sha256,
-	mediatype INTEGER,
-	style_id INTEGER,
-	owner_id INTEGER,
-	ispublic,
-	isactive,
-	tags
-    ) ;
+  media
+  (
+    media_id INTEGER PRIMARY KEY,
+    name,
+    path,
+    geom,
+    sha256,
+    mediatype INTEGER,
+    style_id INTEGER,
+    owner_id INTEGER,
+    ispublic,
+    isactive,
+    tags
+  ) ;
 
 CREATE INDEX IF NOT EXISTS kmedia_own ON media ( owner_id, style_id, media_id ) ;
 
