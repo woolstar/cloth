@@ -89,14 +89,11 @@ sub do_update
   my $its_= load_item( @args{ qw( acct style_id sizes_id ) } ) ;
   $its_= reorder( $its_ ) ;
 
-  my @recs ;
+  my ( @recs, @rz ) ;
 
   $dat{items}= join(',', map { $_->{item_id} } @$its_ ) ;
 
   for (@$its_ ) {
-    my $img= $_->{path} ;
-    $img =~ s(^page/)() ;
-    $_->{img}= $img ;
     my ($x,$y)= $_->{geom} =~ /(\d+)x(\d+)/ ;
     if ( $x && $y )
     {
@@ -112,10 +109,18 @@ sub do_update
       $_->{scale}= "width=$ix height=$iy" ;
     }
 
-    push @recs, $_ ;
+    if ( $_->{count} > 0 ) { push @recs, $_  }
+    	else { push @rz, $_ }
   }
+
+  if ( @recs && @rz ) {
+    my $r_= $recs[-1] ;
+   $r_->{between_}= "<tr><td colspan=99> <BUTTON Name=\"Post\" TYPE=post value=update>Post</BUTTON> <hr><p> </td></tr>\n" ;
+    push @recs, @rz ;
+  }
+
   $dat{item}= \@recs ;
 
-  gen_page('inv_test', \%dat) ;
+  gen_page('item_list', \%dat) ;
 }
 

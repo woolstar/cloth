@@ -30,14 +30,16 @@ Tags <br>
 <TEXTAREA cols=8 rows=5 name="item_{item.item_id}_tag">{item.tags}</TEXTAREA>
 </TD>
 <TD>
-<IMG {item.scale} src={item.img} />
+<IMG {item.scale} src={item.path} />
 </TD>
 <td>
-<A target="_blank" href="{item.img}">full</A>
+<A target="_blank" href="{item.path}">full</A>
 <p>
 <A target="_blank" href="media_item.pl?acct={acct}&media_id={item.media_id}">media</A>
 </td>
 </TR>
+
+{item.between_}
 </REPEAT>
 
 </table>
