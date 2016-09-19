@@ -154,7 +154,7 @@ sub load_item
   return $dbh-> selectall_arrayref(
 		  "SELECT id AS item_id, media_id, name, geom, path, count, it.tags AS tags "
 		  . "FROM item AS it JOIN media USING ( media_id ) "
-		  . "WHERE owner_fk = ? AND style_fk = ? AND sizes_id = ? AND `count` > 0 ",
+		  . "WHERE owner_fk = ? AND style_fk = ? AND sizes_id = ?", 
 		  { Slice => {} },
 		  @_
 		) ;
