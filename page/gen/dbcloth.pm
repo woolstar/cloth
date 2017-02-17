@@ -5,7 +5,7 @@ use gen::db ( db => 'prod.s3db' ) ;
 
 require Exporter;
 our @ISA = ("Exporter") ;
-our @EXPORT = qw(get_user get_styles get_size get_media load_inventory load_items load_style sth_item) ;
+our @EXPORT = qw(get_user get_styles get_size get_media get_campaigns load_inventory load_items load_style sth_item) ;
 
 sub get_user
 {
@@ -65,6 +65,25 @@ sub get_styleinfo
   		 "SELECT style_id, `name`, `folder`, `group`, sizing FROM style WHERE style_id= ?",
 		 undef, $id
 	       ) ;
+}
+
+sub get_campaigns
+{
+  my ($id)= @_ ;
+  my @cmpg ;
+
+  for ( @{ $dbh-> selectall_arrayref( "SELECT name, tags as tagstr, styles as stylestr, art_prefix, isactive "
+				      . "FROM campaign WHERE owner_fk = ? ORDER BY isactive DESC, name ASC",
+				      { Slice => {} },
+				      $id
+				    ) } )
+  {
+    $_->{tags}= [ split /\s+/, $_->{tagstr} ] ;
+    $_->{styles}= [ split /\s+/, $_->{stylestr} ] ;
+    push @cmpg, $_ ;
+  }
+  
+  return \@cmpg ;
 }
 
 sub load_sizes
@@ -154,7 +173,7 @@ sub load_item
   return $dbh-> selectall_arrayref(
 		  "SELECT id AS item_id, media_id, name, geom, path, count, it.tags AS tags "
 		  . "FROM item AS it JOIN media USING ( media_id ) "
-		  . "WHERE owner_fk = ? AND style_fk = ? AND sizes_id = ?", 
+		  . "WHERE owner_fk = ? AND style_fk = ? AND sizes_id = ? ORDER BY tags", 
 		  { Slice => {} },
 		  @_
 		) ;
