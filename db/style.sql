@@ -2,6 +2,7 @@
 DELETE FROM sizing WHERE 1 ;
 
 INSERT INTO sizing (name, sizes_id) SELECT 'XXS3XL', sizes_id FROM sizes where ranking BETWEEN 10 AND 17 ;
+INSERT INTO sizing (name, sizes_id) SELECT 'XS3XL', sizes_id FROM sizes where ranking BETWEEN 11 AND 17 ;
 INSERT INTO sizing (name, sizes_id) SELECT 'XXS2XL', sizes_id FROM sizes where ranking BETWEEN 10 AND 16 ;
 INSERT INTO sizing (name, sizes_id) SELECT 'XSXL', sizes_id FROM sizes where ranking BETWEEN 11 AND 15 ;
 INSERT INTO sizing (name, sizes_id) SELECT 'XXSXL', sizes_id FROM sizes where ranking BETWEEN 10 AND 15 ;
@@ -18,6 +19,7 @@ INSERT INTO sizing (name, sizes_id) SELECT 'GEN', sizes_id FROM sizes where code
 DELETE FROM style WHERE 1 ;
 
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Amelia', 'dress', 'XXS3XL' ) ;
+INSERT INTO style (name, `group`, sizing) VALUES ( 'Ana', 'dress', 'XS3XL' ) ;
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Julia', 'dress', 'XXS3XL' ) ;
 INSERT INTO style (name, `group`, sizing) VALUES ( 'Nicole', 'dress', 'XXS3XL' ) ;
 

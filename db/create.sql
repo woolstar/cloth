@@ -108,3 +108,16 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE UNIQUE INDEX IF NOT EXISTS kweb_media ON web ( item_id ) ;
 
+CREATE TABLE IF NOT EXISTS
+  campaign
+  (
+    owner_fk INTEGER,
+    name,
+    tags,
+    styles,
+    art_prefix,
+    isactive
+  ) ;
+
+CREATE UNIQUE INDEX IF NOT EXISTS kcampaign ON campaign ( owner_fk, name ) ;
+
