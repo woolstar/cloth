@@ -83,7 +83,12 @@ sub gen_page
 
   $data->{_name}= lc $nam || 'empty' ;
   $data->{content_type} ||= 'text/html' ;
-  my $doc= templ( $src, $data ) ;
+  my $doc;
+  for ( split /(<script\s*[^\>]*>.*?<\/script>)/s, $src )
+  {
+    if ( /^<script/ ) { $doc .= $_ }
+    	else { $doc .= templ( $_, $data ) }
+  }
 
   say "Content-Type: $data->{content_type}" ;
   print join("\n", @headers, 'Content-Length: '. length($doc), undef, $doc) ;
