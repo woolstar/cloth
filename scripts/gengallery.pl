@@ -1,37 +1,52 @@
 #!/usr/bin/perl -s
 
-  use 5.022 ;
-  use vars qw( $folder $nocov $simple ) ;
+  use 5.018 ;
+no warnings "experimental::smartmatch" ;
+
+  use vars qw ( $folder $nocov $szf ) ;
   use DBI ;
 
   use File::Copy 'cp' ;
   use Graphics::Magick ;
-  use Data::Dumper ;
 
-no warnings "experimental::smartmatch" ;
-
-  my ( %isize, %icover, %ichart, %imark ) ;
-  my ( $dbh ) ;
+my ( $dbh ) ;
+my ( %iparts, %isparts, %icover, %ichart, %imark, %icamp, %icamppre ) ;
+my ( %szs, %szrank, %style ) ;
 
 sub open_db
 {
-    my $dbpath= "../db/" ;
-    $dbh= DBI-> connect("dbi:SQLite:dbname=${dbpath}prod.s3db", "", "") ;
-    $dbh-> {RaiseError}= 1 if $dbh ;
+  my $dbpath= "../db/" ;
+  $dbh= DBI-> connect("dbi:SQLite:dbname=${dbpath}prod.s3db", "", "") ;
+  $dbh-> {RaiseError}= 1 if $dbh ;
 }
 
-sub load_size
+sub open_img
 {
-  for ( <util/u_size_*.jpg> )
+  my ( $fi, $na ) = @_ ;
+
+  die "Unable to open $na : $fi" unless -e $fi ;
+  my $img= new Graphics::Magick ;
+  $img-> Read($fi) ;
+  return $img ;
+}
+
+sub load_parts
+{
+  for ( <util/u*_*.jpg> )
   {
-    my ($sz)= /u_size_(\w+)\./ ;
-    next unless $sz ;
+    my ( $spcl, $ty, $val )= /u(\w*)_([a-z]+)_(\w+)\./ ;
+    next unless $ty && $val ;
     my $img= new Graphics::Magick ;
     $img-> Read($_) ;
-    $isize{$sz}= $img ;
+    if ( $spcl ) { $isparts{ "u$spcl" }{$ty}{$val}= $img ; }
+    	else { $iparts{$ty}{$val}= $img ; }
   }
 
-  $isize{'GEN'}= '' ;
+      ## side mark
+  $iparts{'strip'}= open_img( 'util/link_strip.jpg', 'strip' ) ;
+
+      ## filler
+  $iparts{'size'}{'GEN'}= undef ;
 }
 
 sub load_cover
@@ -52,19 +67,59 @@ sub load_cover
 
 sub load_mark
 {
-  for ( 3, 6 )
+  $imark{ '3B' }= open_img( 'util/c_jeanne_3x3.tif', 'mark' ) ;
+  $imark{ '3W' }= open_img( 'util/cw_jeanne_3x3.tif', 'mark' ) ;
+}
+
+sub load_tables
+{
+  for ( @{ $dbh-> selectall_arrayref("SELECT sizes_id, code, ranking FROM sizes",  { Slice=> {} }) } )
   {
-    my $fi= "util/c_jeanne_${_}x${_}.tif" ;
-    say "FAIL: unable open $fi" && next unless -e $fi ;
-    my $img= new Graphics::Magick ;
-    $img-> Read($fi) ;
-    $imark{$_}= $img ;
+    $szs{$_->{sizes_id}}= $_ ;
+    $szrank{ $_->{code} }= $_->{ranking } ;
+  }
+  for ( @{ $dbh-> selectall_arrayref("SELECT style_id, `name`, `folder` FROM style",  { Slice=> {} }) } )
+  {
+    $_->{folder} //= lc $_->{name} ;
+    $style{$_->{style_id}}= $_
   }
 }
 
-sub process
+sub load_campaigns
 {
-  my ($path, $i, $sz)= @_ ;
+  for ( @{ $dbh-> selectall_arrayref("SELECT name, tags, styles, art_prefix FROM campaign WHERE owner_fk= 100 AND isactive = 1",
+				      { Slice => {} }
+				    ) } )
+  {
+    # say "Campaign $_->{name} : $_->{styles} " ;
+    if ( $_->{styles} )
+	{ for my $sty ( split /\s+/, $_->{styles} ) { $icamp{$sty}{$_->{tags}}= $_->{name} } }
+	else { $icamp{''}{$_->{tags}}= $_->{name} }
+    $icamppre{$_->{name}}= $_->{art_prefix} if $_->{art_prefix} ;
+  }
+}
+
+sub find_campaign
+{
+  my ( $sty, $tg )= @_ ;
+  return $icamp{$sty}{$tg} || $icamp{''}{$tg} ;
+}
+
+##
+
+sub iblank
+{
+  my ( $g )= @_ ;
+
+  my $i= new Graphics::Magick ;
+  $i-> Set( size => $g ) ;
+  $i-> ReadImage( 'xc:white' ) ;
+  return $i ;
+}
+
+sub oldprocess
+{
+  my ( $path, $i, $sz, $sty )= @_ ;
 
   my $img= new Graphics::Magick ;
   $img-> Read( "../page/img/$i.jpg" ) ;
@@ -77,55 +132,82 @@ sub process
   $ix= int( $iy * $x / $y + 0.5 ) ;
 
   $img-> Resize( geometry => "${ix}x${iy}" ) ;
-  if ( $sz ne 'GEN' )
-  {
-    $img-> Composite( image => $isize{$sz},
-    		      gravity => 'NorthEast',
-		      geometry => '-8-8'
-		    ) ;
-  }
 
-  ## watermark
-  $img-> Composite( Image => $imark{3},
-		    gravity => 'SouthEast',
-		    geometry => '+16+16'
-		  ) ;
+  # watermark
+  $img-> Composite( image => $imark{ '3W' }, gravity => "SouthWest", geometry => "+32+32" ) ;
+  $img-> Flatten() ;
+  $img-> Write( $path ) ;
+}
+
+sub process
+{
+  my ( $path, $i, $sz, $sty, $prefix )= @_ ;
+
+  return oldprocess( $path, $i, $sz, $sty ) if ( 'combo' eq $sty ) || ! ( $sz ~~ %{$iparts{'size'}} ) ;
+
+  my $isrc= new Graphics::Magick ;
+  $isrc-> Read( "../page/img/$i.jpg" ) ;
+
+  my ($x,$y)= $isrc-> Get('columns', 'height' ) ;
+  return unless $y ;
+
+  my $imid= iblank( '260x542' ) ;
+  if (( 'leggings' eq $sty ) || ('kleggings' eq $sty ))
+      { $imid-> Composite( image => $isrc, gravity => 'Center', geometry => "-330-320" ) }
+    else { $imid-> Composite( image => $isrc, gravity => 'Center' ) ; }
+
+  my ($ix, $iy) ;
+  $iy= 960 ;
+  $ix= int( $iy * $x / $y + 0.5 ) ;
+
+  $isrc-> Resize( geometry => "${ix}x${iy}" ) ;
+  my $img= iblank( "896x960" ) ;
+
+  $img-> Composite( image => $isrc, gravity => 'West' ) ;
+  $img-> Composite( image => $iparts{'strip'}, gravity => 'East' ) ;
+
+  my $isty= $iparts{'sty'}{$sty} ;
+  $isty= $isparts{$prefix}{'sty'}{$sty} if $prefix && $isparts{$prefix} && $isparts{$prefix}{'sty'}{$sty} ;
+
+  $img-> Composite( image => $isty, gravity => 'NorthEast', geometry => '+44-0' ) ;
+  $img-> Composite( image => $iparts{'size'}{$sz}, gravity => 'NorthEast', geometry => '+44+109' ) ;
+
+  my $iprice= $iparts{'price'}{$sty . lc $sz} || $iparts{'price'}{$sty} ;
+  $iprice= $isparts{$prefix}{'price'}{$sty} if $prefix && $isparts{$prefix} && $isparts{$prefix}{'price'}{$sty}  ;
+  $img-> Composite( image => $iprice, gravity => 'NorthEast', geometry => '+44+309' ) ;
+
+  $img-> Composite( image => $imid, gravity => 'SouthEast', geometry => '+44-0' ) ;
+
+  # watermark
+  $img-> Composite( image => $imark{ '3W' }, gravity => "SouthWest", geometry => "+32+32" ) ;
 
   $img-> Flatten() ;
   $img-> Write( $path ) ;
 }
 
+##
+
 {
-  my ( %szs, %szrank, %style ) ;
-
   open_db() ;
-  for ( @{ $dbh-> selectall_arrayref("SELECT sizes_id, code, ranking FROM sizes",  { Slice=> {} }) } )
-  {
-    $szs{$_->{sizes_id}}= $_ ;
-    $szrank{ $_->{code} }= $_->{ranking } ;
-  }
-  for ( @{ $dbh-> selectall_arrayref("SELECT style_id, `name`, `folder` FROM style",  { Slice=> {} }) } )
-  {
-    $_->{folder} //= lc $_->{name} ;
-    $style{$_->{style_id}}= $_
-  }
 
-  my $its_= $dbh-> selectall_arrayref("SELECT name, `count`, item.tags, style_id, sizes_id "
-  				      . "FROM item JOIN media USING ( media_id ) "
-				      . "WHERE owner_fk = ? AND `count` > 0 ORDER BY style_id, sizes_id ",
-				     { Slice=> {} },
-				     100
-				     ) ;
-
-  say "items ". @$its_ ;
-
-  load_size() ;
+  load_parts() ;
   load_cover() ;
   load_mark() ;
-  say "setup. " ;
+  load_tables() ;
+  load_campaigns() ;
+
+  my $its_= $dbh-> selectall_arrayref("SELECT name, `count`, item.tags as tags, style_id, sizes_id "
+                                      . "FROM item JOIN media USING ( media_id ) "
+                                      . "WHERE owner_fk = ? AND `count` > 0 ORDER BY style_id, sizes_id ",
+                                     { Slice=> {} },
+                                     100
+                                     ) ;
+
+  say "Folder: $folder" ;
+  say "items ". @$its_ ;
   $|= 1 ;
 
-  my ( $styrec, $sty, $styf, $osty) ;
+  my ( $styrec, $sty, $styf, $osty ) ;
   for ( @$its_ )
   {
     $styrec= $style{ $_->{style_id}} ;
@@ -139,24 +221,41 @@ sub process
     my ($img, $ct, $szid)= @$_{ qw( name count sizes_id ) } ;
     next unless $ct ;
 
-    my $path= "prepare/" ;  mkdir $path unless -d $path ;
-    $path .= "$styf/" ;
+    my $path= "prepare" ;  mkdir $path unless -d $path ;
+    $path .= "/$styf" ;
     if ( ! -d $path )
     {
       mkdir $path ;
-      cp( $icover{$styf}, "$path/0cover.jpg" ) if $styf ~~ %icover ;
+      # cp( $icover{$styf}, "$path/0cover.jpg" ) if $styf ~~ %icover ;
       cp( $ichart{$styf}, "$path/0sizing.jpg" ) if $styf ~~ %ichart ;
     }
 
+    my $cmp ;
+    if ( $_->{tags} )
+    {
+      for my $tg ( map { lc } split /\s+/, $_->{tags} )
+      {
+	$cmp //= find_campaign($_->{style_id}, $tg) ;
+      }
+    }
+
     my $szrec= $szs{$szid} ;
-    unless ( $simple )
-	{ $path .= "sz$szrec->{ranking}_$szrec->{code}_$styf/" ;  mkdir $path unless -d $path ; }
-    $path .= "im${styf}_sz$szrec->{ranking}$szrec->{code}_$img.jpg" ;
+    if ( $szf ) {
+      $path .= "/sz$szrec->{ranking}_$szrec->{code}_$styf" ;
+      $path .= "_$cmp" if $cmp ;
+      mkdir $path unless -d $path
+    }
+    else
+    {
+      $path .= "_$cmp" if $cmp ;
+      mkdir $path unless -d $path
+    }
+    $path .= "/im${styf}_sz$szrec->{ranking}$szrec->{code}_$img.jpg" ;
 
-    process( $path, $img, $szrec->{code} ) ; 
-
+    process( $path, $img, $szrec->{code}, $styf, $icamppre{$cmp} ) ;
     print '.'
   }
 
   say "\ndone."
 }
+
