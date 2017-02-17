@@ -1,4 +1,3 @@
-
 <p style="font-size:14pt">
 User {name} (<A href="index.pl?acct={acct}">{user}</A>)
 </p>
@@ -11,8 +10,8 @@ New inventory
 <p>
 
 <FORM name=f action="?" >
-	<INPUT type=hidden name="acct" value={"acct"} />
-	<INPUT type=hidden name="style_id" value={"style_id"} />
+  <INPUT type=hidden name="acct" value={"acct"} />
+  <INPUT type=hidden name="style_id" value={"style_id"} />
 
 <table cellpadding=2>
 <repeat on=media>
@@ -27,13 +26,20 @@ New inventory
   </td>
   <td>
   <input type="checkbox" name="item_{media.media_id}">
+  <p>
 </tr>
 </repeat>
 </table>
 
-	{style_sel}
-	<BUTTON name="action" type=post value=update>Update</BUTTON>
+<p>
+<p>
+
+  {style_sel}
+  <BUTTON name="action" type=post value=update>Update</BUTTON>
+
 </FORM>
+
+
 
 <p>
 

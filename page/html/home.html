@@ -10,7 +10,7 @@ Inventory:
 <table cellpadding=5>
 <tr><th width=120>Style</th><th width=30>Total</th><th width=48 align=center>New</th></tr>
 <repeat on=inv>
-<tr valign=center>
+<tr valign=center height=36>
   <td class=lead>{inv.style}</td>
   <td class=total align=right><A href="inv_list.pl?acct={acct}&style_id={inv.style_id}">{inv.total}</A></td>
   <td class=news align=right width=40>{inv.news}</td>
@@ -25,5 +25,8 @@ Inventory:
 <p>
 Total <b>{total}</b>
 
+<hr>
+<a href="camp_list.pl?acct={acct}">Campaigns</a> &nbsp; &nbsp;
+<a href="tag_list.pl?acct={acct}">Image tags</a>
 <p>
 

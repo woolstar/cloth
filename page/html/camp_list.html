@@ -1,0 +1,22 @@
+
+<p style="font-size:14pt">
+User {name} ({user})
+</p>
+
+<hr>
+Campaigns:
+<XMP>{data}</XMP>
+
+<table>
+  <tr><th>campaign</th><th>tags</th><th>styles</th><th>active</th></tr>
+
+<REPEAT on=camp>
+ <tr>
+  <td>{camp.name}</td>
+  <td>{camp.tagview}</td>
+  <td>{camp.stylestr}</td>
+  <td align=center>{camp.isactive}</td>
+ </tr>
+</REPEAT>
+
+</table>
