@@ -56,4 +56,5 @@ INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Sarah', 'sarah', 'sw
 INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Mark', 'mark', 'Men', 'M3XL' ) ;
 
 INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Bianka', 'bianka', 'kimono', 'KID' ) ;
+INSERT INTO style (name, folder, `group`, sizing) VALUES ( 'Scarlett', 'scarlett', 'Kids', 'KID' ) ;
 
