@@ -185,8 +185,16 @@ sub db_clearcounts
   my ( $id, $sty )= @_ ;
 
   return $dbh-> do( "UPDATE item SET `count`=0 WHERE owner_fk= ? AND style_fk= ?", 
-  					undef, $id, $sty 
-				  ) ;
+		    undef, $id, $sty 
+		  ) ;
+}
+
+sub db_clearitem
+{
+  my ( $id, $media )= @_ ;
+  return $dbh-> do( "DELETE FROM item WHERE owner_fk = ? AND media_id = ? AND `count` = 0",
+  		    undef, $id, $media
+		  ) ;
 }
 
 sub media_nogen

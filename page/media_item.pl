@@ -41,6 +41,17 @@ sub layout
   return $txt
 }
 
+sub do_clear
+{
+  my ($rec_)= @_ ;
+
+  my $acct= $rec_->{acct} ;
+  db_clearitem( $acct, $rec_->{media_id} ) ;
+
+  web_redirect( $acct, $rec_->{style_id}, 'inv_list' ) ;
+  exit
+}
+
 sub do_update
 {
   my ($rec_)= @_ ;
@@ -79,6 +90,7 @@ sub do_update
   %dat= ( %$u_, %args ) ;
   $dat{username}= $u_->{name} ;
 
+  do_clear( \%args) if $args{Clear} ;
   do_update( \%args ) if $args{sizes} ;
 
   {
