@@ -204,6 +204,10 @@ sub format_tag
    $r_->{between_}= "<tr><td colspan=99> <BUTTON Name=\"Post\" TYPE=post value=update>Post</BUTTON> <hr><p> </td></tr>\n" ;
     push @recs, @rz ;
   }
+  else
+  {
+    @recs= @rz ;
+  }
 
   $dat{item}= \@recs ;
 
