@@ -16,3 +16,6 @@ insert into campaign (owner_fk, name, tags, styles, isactive)
 insert into campaign (owner_fk, name, tags, art_prefix, isactive)
 	VALUES ( 100, 'mommynme', 'mm', 'umm', 1 ) ;
 
+insert into campaign (owner_fk, name, tags, art_prefix, isactive)
+	VALUES ( 100, 'disney', 'disney', 'uds', 1 ) ;
+
