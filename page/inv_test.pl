@@ -5,6 +5,8 @@ use gen::page qw(gen_page gen_bare templ load_templ) ;
 use gen::dbcloth ;
 use gen::http qw(parse_query) ;
 
+use experimental 'smartmatch' ;
+
 use Data::Dumper ;
 
 sub web_redirect
@@ -66,6 +68,97 @@ sub do_update
   exit
 }
 
+sub gen_tags
+{
+  my ($rec_)= @_ ;
+  my @tg ;
+
+  if ( $_->{count} ) {
+    push @tg, 'normal' ;
+    if ( $_->{tags} ) { push @tg, split /\s+/, $_->{tags}  ; }
+      else { push @tg, 'plain' }
+  }
+    else { push @tg, 'empty' }
+
+  return @tg
+}
+
+sub gen_category
+{
+  my ( $list_ , $sel ) = @_ ;
+
+  my $ct = 0 + ( grep { $_->{count} > 0 } @$list_ ) ;
+  my $select= $sel || (( $ct > 20 ) ? 'plain' : 'normal' ) ;
+  
+  my %grps = ( plain => undef, normal => undef, empty => undef ) ;
+  for ( @$list_ ) {
+    for my $tg ( gen_tags($_) )
+      { if ( ! $grps{$tg} ) { $grps{$tg}= [ 1, $_ ] } else { $grps{$tg}[0] ++ } }
+  }
+
+  foreach ( grep { ! $grps{$_} } keys %grps ) { delete $grps{$_} }
+  my $empty = $grps{empty} ;
+  delete $grps{empty} ;
+
+  my @gdata= map { [ $_, @{$grps{$_}} ] } sort { $grps{$b}[0] <=> $grps{$a}[0] } keys %grps ;
+  push @gdata, [ 'empty', @$empty ] if $empty ;
+  return ( \@gdata, $select )
+}
+
+sub is_tag
+{
+  my ($rec_, $sel)= @_ ;
+  my @cat= gen_tags( $rec_ ) ;
+  return $sel ~~ @cat
+}
+
+sub scale
+{
+  my ($rec_, $sz)= @_ ;
+  my ($x,$y)= $rec_->{geom} =~ /(\d+)x(\d+)/ ;
+
+  if ( $x && $y )
+  {
+    my ($ix, $iy) ;
+    if ( $x > $y ) {
+      $ix= $sz ; 
+      $iy= int( $sz * $y / $x + 0.5 ) ;
+    }
+    else {
+      $iy= $sz ; 
+      $ix= int( $sz * $x / $y + 0.5 ) ;
+    }
+    return "width=$ix height=$iy" ;
+  }
+}
+
+sub format_tag
+{
+  my ( $tg_, $path )= @_ ;
+
+  my $txt ;
+
+  $txt = '<tr>' ;
+  for ( @$tg_ ) {
+    $txt .= "<td width=70 align=center><a href=\"$path&display=$_->[0]\">$_->[0]</a></td>" ;
+  }
+  $txt .= "</tr>" ;
+
+  $txt .= '<tr>' ;
+  for ( @$tg_ ) {
+    $txt .= "<td align=center>$_->[1]</td>" ;
+  }
+  $txt .= "</tr>" ;
+
+  $txt .= '<tr>' ;
+  for ( map { $_->[2] } @$tg_ ) {
+    $txt .= "<td align=center><img ". scale($_, 120) ." src=$_->{path} /></td>" ;
+  }
+  $txt .= "</tr>" ;
+
+  return $txt
+}
+
 {
   my %dat ;
 
@@ -93,22 +186,15 @@ sub do_update
 
   $dat{items}= join(',', map { $_->{item_id} } @$its_ ) ;
 
-  for (@$its_ ) {
-    my ($x,$y)= $_->{geom} =~ /(\d+)x(\d+)/ ;
-    if ( $x && $y )
-    {
-      my ($ix, $iy) ;
-      if ( $x > $y ) {
-      	$ix= 400 ; 
-	$iy= int( 400 * $y / $x + 0.5 ) ;
-      }
-      else {
-      	$iy= 400 ; 
-	$ix= int( 400 * $x / $y + 0.5 ) ;
-      }
-      $_->{scale}= "width=$ix height=$iy" ;
-    }
+  my ( $cats_, $ccat ) = gen_category( $its_, $args{display} ) ;
 
+  my $path= 'inv_test.pl?' . join('&', map { "$_=$dat{$_}" } qw(acct style_id sizes_id) ) ;
+  $dat{tags}= format_tag( $cats_, $path ) ;
+
+  for (@$its_ ) {
+    next unless is_tag( $_, $ccat ) ;
+
+    $_->{scale}= scale($_, 400) ;
     if ( $_->{count} > 0 ) { push @recs, $_  }
     	else { push @rz, $_ }
   }
